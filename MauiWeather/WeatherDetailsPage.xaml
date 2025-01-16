@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiWeather.WeatherDetailsPage"
+             xmlns:model="clr-namespace:MauiWeather.Data"
+             xmlns:converters="clr-namespace:MauiWeather.Converters"
+             xmlns:viewmodel="clr-namespace:MauiWeather.Viewmodels"
+             x:DataType="viewmodel:WeatherDetailsPageViewModel"
+             BackgroundImageSource="lightblue_transparent.png"
+             Padding="16"
+             Title="Weather Details">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:WeatherIconConverter x:Key="WeatherIconConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <VerticalStackLayout VerticalOptions="StartAndExpand" HorizontalOptions="Center">
+        <Frame BorderColor="Gray"  CornerRadius="16" HasShadow="False" Background="Transparent">
+            <HorizontalStackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                <VerticalStackLayout Padding="20" >
+                    <Label Text="{Binding WeatherDto.main.temp, StringFormat='Temperature: {0:0}°'}" 
+                           FontSize="24" 
+                           TextColor="Black"
+                           HorizontalOptions="Start" />
+                    <Label Text="{Binding WeatherDto.main.temp_min, StringFormat='Min: {0:0}°'}" 
+                           FontSize="24" 
+                           TextColor="Black"
+                           HorizontalOptions="Start" />
+                    <Label Text="{Binding WeatherDto.main.temp_max, StringFormat='Max: {0:0}°'}" 
+                           FontSize="24" 
+                           TextColor="Black"
+                           HorizontalOptions="Start" />
+                    <Label Text="{Binding WeatherDto.weather[0].description, StringFormat='Description: {0:0}'}" 
+                           FontSize="24" 
+                           TextColor="Black"
+                           HorizontalOptions="Start" />
+                    <Label Text="{Binding WeatherDto.main.humidity, StringFormat='Humidity: {0:0}%'}" 
+                           FontSize="24" 
+                           TextColor="Black"
+                           HorizontalOptions="Start" />
+                    <Label Text="{Binding WeatherDto.wind.speed, StringFormat='Wind speed: {0:0}'}" 
+                           FontSize="24" 
+                           TextColor="Black"
+                           HorizontalOptions="Start" />
+                </VerticalStackLayout>
+                <Image Source="{Binding WeatherDto.weather[0].icon, Converter={StaticResource WeatherIconConverter}}"
+                       WidthRequest="150"
+                       HeightRequest="150"
+                       Margin="16,0,0,0"
+                       HorizontalOptions="Start"
+                       VerticalOptions="Start"/>
+            </HorizontalStackLayout>
+        </Frame>
+    </VerticalStackLayout>
+</ContentPage>

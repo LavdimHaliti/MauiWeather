@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiWeather.MainPage"
+             xmlns:converters="clr-namespace:MauiWeather.Converters"
+             xmlns:model="clr-namespace:MauiWeather.Data"
+             xmlns:viewmodel="clr-namespace:MauiWeather.Viewmodels"
+             x:DataType="viewmodel:MainWeatherViewModel"
+             BackgroundImageSource="lightblue_transparent.png"
+             Padding="16">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:DateTimeConverter x:Key="DateTimeConverter" />
+            <converters:WeatherIconConverter x:Key="WeatherIconConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <VerticalStackLayout Spacing="32">
+        <!-- Input Section -->
+        <Grid RowDefinitions="Auto"
+              ColumnDefinitions="*, Auto, Auto"
+              Padding="8"
+              ColumnSpacing="16">
+
+            <!-- City Input -->
+            <Entry x:Name="CityNameEntry"
+                   Placeholder="Enter a city"
+                   Text="{Binding CityNameText}"
+                   AutomationProperties.Name="City Entry"
+                   Grid.Column="0"
+                   VerticalOptions="Center"
+                   HorizontalOptions="FillAndExpand" />
+
+            <!-- Search Button -->
+            <Button Command="{Binding SearchCityNameCommand}"
+                    ImageSource="search_icon.png"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    BackgroundColor="Transparent"
+                    BorderColor="Gray"
+                    BorderWidth="1"
+                    CornerRadius="20"
+                    AutomationProperties.Name="Search Button"
+                    Grid.Column="1" />
+
+            <Picker 
+                    ItemsSource="{Binding UnitOptions}"
+                    SelectedItem="{Binding SelectedUnit}"
+                    Title="{Binding SelectedUnit}"
+                    Background="Transparent"
+                    BackgroundColor="Gray"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    HorizontalOptions="FillAndExpand"/>
+        </Grid>
+        <!-- Weather Info Section -->
+        <Grid RowDefinitions="*, Auto, Auto"
+              ColumnDefinitions="*, Auto, *"
+              HorizontalOptions="FillAndExpand" 
+              VerticalOptions="FillAndExpand">
+            <!-- Weather Icon Centered -->
+            <Image Source="{Binding CurrentWeatherIcon, Converter={StaticResource WeatherIconConverter}}"
+                   WidthRequest="100"
+                   HeightRequest="100"
+                   Grid.Row="1"
+                   Grid.Column="1"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" >
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigatoToWeatherDetailsCommand}"/>
+                </Image.GestureRecognizers>
+            </Image>
+
+            <!-- Temperature Details Beneath the Image -->
+            <VerticalStackLayout 
+                           Grid.Row="2"
+                           Grid.Column="1"
+                           HorizontalOptions="Center">
+                <Label Text="{Binding CurrentTemp, StringFormat='{0:0}°'}"
+                       FontSize="40"
+                       TextColor="Black"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+                <Label Text="{Binding FeelsLike, StringFormat='Feels like: {0:0}°'}"
+                       FontSize="16"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </VerticalStackLayout>
+
+            <!-- Min/Max Temperature and Description to the Right of the Image -->
+            <HorizontalStackLayout Grid.Row="1" Grid.Column="2" HorizontalOptions="Start" >
+                <VerticalStackLayout HorizontalOptions="StartAndExpand">
+                    <HorizontalStackLayout HorizontalOptions="FillAndExpand" >
+                        <Label Text="{Binding MinTemp, StringFormat='{0:0}° /'}"
+                       FontSize="16"
+                       TextColor="Black"
+                       Margin="0,8,0,0"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Start"
+                       VerticalOptions="Start" />
+                        <Label Text="{Binding MaxTemp, StringFormat=' {0:0}°'}"
+                       FontSize="16"
+                       Margin="0,8,0,0"
+                       FontAttributes="Bold"
+                       TextColor="Black" />
+                    </HorizontalStackLayout>
+                    <Label Text="{Binding WeatherDescription}"
+                           TextColor="Black"
+                           FontSize="18" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+        </Grid>
+
+
+
+
+        <!-- Temperature for Other Days -->
+        <Frame BorderColor="Gray" Padding="32" CornerRadius="16" HasShadow="False" Background="Transparent">
+            <CollectionView ItemsSource="{Binding ForecastWeatherList}"
+                            SelectionMode="None"
+                            ItemsLayout="HorizontalList"
+                            HorizontalOptions="FillAndExpand">
+                <CollectionView.ItemTemplate >
+                    <DataTemplate x:DataType="model:ForecastWeatherList">
+                        <Frame Padding="8" Margin="8" HorizontalOptions="Center" WidthRequest="150" Background="Transparent">
+                            <VerticalStackLayout Spacing="8" HorizontalOptions="Center" Padding="8">
+                                <!-- Day Label -->
+                                <Label Text="{Binding dt_txt, Converter={StaticResource DateTimeConverter}}"
+                                        FontSize="16"
+                                        HorizontalTextAlignment="Center"
+                                        HorizontalOptions="Center" />
+
+                                <!-- Weather Icon -->
+                                <Image Source="{Binding weather[0].icon, Converter={StaticResource WeatherIconConverter}}"
+                                        WidthRequest="50"
+                                        HeightRequest="50"
+                                        HorizontalOptions="Center" />
+
+                                <HorizontalStackLayout HorizontalOptions="CenterAndExpand">
+                                    <!-- Fixed Temperature Value Container -->
+                                    <Label Text="{Binding main.temp, StringFormat='{0:0}°'}"
+                                           FontSize="24"
+                                           FontAttributes="Bold"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Frame>
+    </VerticalStackLayout>
+</ContentPage>
